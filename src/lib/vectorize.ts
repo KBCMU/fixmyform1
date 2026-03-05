@@ -16,7 +16,7 @@ export interface ReferencePose {
 }
 
 export class VectorizeService {
-  constructor(private vectorize: VectorizeIndex) {}
+  constructor(private vectorize: VectorizeIndex) { }
 
   /**
    * Store a reference pose in Vectorize
@@ -56,6 +56,7 @@ export class VectorizeService {
    * This would typically use a model to convert pose data to embeddings
    */
   async generateEmbedding(poseKeypoints: unknown): Promise<number[]> {
+    void poseKeypoints;
     // Placeholder - in production, this would use a pose embedding model
     // Could use Workers AI or external service
     return new Array(128).fill(0).map(() => Math.random());

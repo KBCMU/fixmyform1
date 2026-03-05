@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
 
 export default nextConfig;
 
-// added by create cloudflare to enable calling `getCloudflareContext()` in `next dev`
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
-initOpenNextCloudflareForDev();
+// Only init Cloudflare for local dev - skip on Vercel to avoid EPIPE/build failures
+if (!process.env.VERCEL) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { initOpenNextCloudflareForDev } = require("@opennextjs/cloudflare");
+  initOpenNextCloudflareForDev();
+}

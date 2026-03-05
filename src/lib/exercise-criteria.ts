@@ -7,7 +7,6 @@ import type { PoseKeypoints } from "./pose-estimation-v2";
 import {
     calculateKneeAngle,
     calculateHipAngle,
-    getAverageAngle,
     getMinMaxAngle,
     calculateAngleStability,
 } from "./angle-calculator";
@@ -49,7 +48,6 @@ function defaultSeverityClassifier(
     idealRange: { min: number; max: number }
 ): CheckpointSeverity {
     const { min, max } = idealRange;
-    const midpoint = (min + max) / 2;
     const tolerance = (max - min) / 2;
 
     // Value is within ideal range

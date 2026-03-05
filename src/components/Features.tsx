@@ -50,7 +50,7 @@ export default function Features() {
   return (
     <section
       ref={sectionRef}
-      className="py-40 px-6 lg:px-12 relative bg-black overflow-hidden"
+      className="pt-40 pb-16 px-6 lg:px-12 relative bg-black overflow-hidden"
     >
       <div className="bg-noise absolute inset-0 pointer-events-none" />
 

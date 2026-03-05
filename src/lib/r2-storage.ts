@@ -10,7 +10,7 @@ export interface R2UploadOptions {
 }
 
 export class R2Storage {
-  constructor(private r2: R2Bucket) {}
+  constructor(private r2: R2Bucket) { }
 
   /**
    * Upload a video file to R2
@@ -34,6 +34,7 @@ export class R2Storage {
    * Get a signed URL for video access
    */
   async getSignedUrl(key: string, expiresIn: number = 3600): Promise<string> {
+    void expiresIn;
     // R2 signed URLs would be generated here
     // For now, return a placeholder
     return `/videos/${key}`;

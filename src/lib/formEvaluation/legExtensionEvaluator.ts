@@ -15,7 +15,7 @@ import {
     calculatePhaseDurations,
     getDefaultLegExtensionConfig,
 } from "./repSegmentation";
-import { calculateKneeAngle, calculateHipAngle, calculateDistance } from "../angle-calculator";
+import { calculateKneeAngle } from "../angle-calculator";
 
 /**
  * Metrics for a single rep
@@ -119,7 +119,7 @@ export class LegExtensionEvaluator implements ExerciseEvaluator {
     /**
      * Validate a single rep
      */
-    validateRep(rep: Rep, frames: PoseFrame[]): boolean {
+    validateRep(rep: Rep): boolean {
         return rep.isValid;
     }
 
@@ -181,9 +181,9 @@ export class LegExtensionEvaluator implements ExerciseEvaluator {
             bouncing: { count: 0, avgConfidence: 0 },
         };
 
-        let incompleteExtensionConfidences: number[] = [];
-        let hipLiftConfidences: number[] = [];
-        let bouncingConfidences: number[] = [];
+        const incompleteExtensionConfidences: number[] = [];
+        const hipLiftConfidences: number[] = [];
+        const bouncingConfidences: number[] = [];
 
         for (const metrics of repMetrics) {
             // Incomplete Extension: max extension < 160 degrees

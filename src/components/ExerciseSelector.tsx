@@ -288,7 +288,6 @@ export default function ExerciseSelector({
               ...(exercise.secondary_muscles || [])
             ];
             const displayMuscles = allMuscles.length > 0 ? allMuscles : (exercise.muscle_groups || []);
-            const primaryMuscle = exercise.primary_muscles?.[0] || "";
 
             return (
               <button

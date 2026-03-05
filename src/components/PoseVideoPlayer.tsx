@@ -12,14 +12,14 @@ const drawConnectors = (
 ) => {
   ctx.strokeStyle = options.color;
   ctx.lineWidth = options.lineWidth;
-  
+
   connections.forEach(([start, end]) => {
     const startLandmark = landmarks[start];
     const endLandmark = landmarks[end];
-    
-    if (startLandmark && endLandmark && 
-        startLandmark.visibility && startLandmark.visibility > 0.1 &&
-        endLandmark.visibility && endLandmark.visibility > 0.1) {
+
+    if (startLandmark && endLandmark &&
+      startLandmark.visibility && startLandmark.visibility > 0.1 &&
+      endLandmark.visibility && endLandmark.visibility > 0.1) {
       ctx.beginPath();
       ctx.moveTo(startLandmark.x, startLandmark.y);
       ctx.lineTo(endLandmark.x, endLandmark.y);
@@ -79,7 +79,7 @@ export default function PoseVideoPlayer({
   // Find the closest pose result for a given video timestamp
   const getPoseForTime = useRef((currentTime: number): PoseEstimationResult | null => {
     if (poseResults.length === 0) return null;
-    
+
     const frameIndex = Math.floor((currentTime * 1000) / interval);
     const clampedIndex = Math.max(0, Math.min(frameIndex, poseResults.length - 1));
     return poseResults[clampedIndex];
@@ -96,9 +96,9 @@ export default function PoseVideoPlayer({
   }, [poseResults, interval]);
 
   // Convert our keypoints format to MediaPipe format for drawing
-  const convertToMediaPipeLandmarks = (keypoints: any) => {
+  const convertToMediaPipeLandmarks = (keypoints: Record<string, { x: number; y: number; z?: number; visibility?: number }>) => {
     const landmarks: Array<{ x: number; y: number; z?: number; visibility?: number }> = [];
-    
+
     // Initialize all 33 landmarks with zeros
     for (let i = 0; i < 33; i++) {
       landmarks.push({ x: 0, y: 0, z: 0, visibility: 0 });
@@ -154,12 +154,12 @@ export default function PoseVideoPlayer({
       // Set canvas size to match video's actual rendered size
       let displayWidth: number;
       let displayHeight: number;
-      
+
       if (video.videoWidth > 0 && video.videoHeight > 0) {
         const rect = video.getBoundingClientRect();
         const videoAspect = video.videoWidth / video.videoHeight;
         const containerAspect = rect.width / rect.height;
-        
+
         if (containerAspect > videoAspect) {
           displayHeight = rect.height;
           displayWidth = displayHeight * videoAspect;
@@ -175,7 +175,7 @@ export default function PoseVideoPlayer({
         displayWidth = rect.width;
         displayHeight = rect.height;
       }
-      
+
       // Set canvas to match video display size
       if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
         canvas.width = displayWidth;
@@ -190,8 +190,8 @@ export default function PoseVideoPlayer({
       if (!pose) return;
 
       // Convert keypoints to MediaPipe format
-      const landmarks = convertToMediaPipeLandmarks(pose.keypoints);
-      
+      const landmarks = convertToMediaPipeLandmarks(pose.keypoints as Record<string, { x: number; y: number; z?: number; visibility?: number }>);
+
       // Scale landmarks from normalized coordinates (0-1) to canvas coordinates
       const scaledLandmarks = landmarks.map(landmark => ({
         x: landmark.x * canvas.width,
@@ -201,10 +201,10 @@ export default function PoseVideoPlayer({
       }));
 
       // Check if we have enough valid landmarks to draw
-      const validLandmarks = scaledLandmarks.filter(l => 
+      const validLandmarks = scaledLandmarks.filter(l =>
         l.x > 0 && l.y > 0 && (l.visibility === undefined || l.visibility > 0)
       );
-      
+
       if (validLandmarks.length < 3) {
         return;
       }
@@ -243,7 +243,7 @@ export default function PoseVideoPlayer({
       const now = Date.now();
       if (now - lastDrawTime < drawInterval) return;
       lastDrawTime = now;
-      
+
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
@@ -326,7 +326,7 @@ export default function PoseVideoPlayer({
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 pointer-events-none"
-        style={{ 
+        style={{
           width: "100%",
           height: "100%",
           objectFit: "contain"

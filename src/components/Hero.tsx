@@ -110,7 +110,7 @@ export default function Hero() {
 
       {/* === GALLERY PLAQUE/STAT (Top Right) === */}
       <div
-        className={`absolute top-[28%] right-[10%] xl:right-[15%] z-20 max-w-[200px] hidden md:block transition-opacity duration-1000 delay-500`}
+        className={`absolute top-[28%] right-[4%] xl:right-[10%] z-20 max-w-[200px] hidden md:block transition-opacity duration-1000 delay-500`}
         style={{
           transform: textTransform,
           opacity: loaded ? textOpacity : 0
@@ -126,7 +126,7 @@ export default function Hero() {
 
       {/* === GALLERY PLAQUE/STAT (Bottom Right) === */}
       <div
-        className={`absolute top-[65%] right-[10%] xl:right-[15%] z-20 max-w-[220px] hidden md:block transition-opacity duration-1000 delay-700`}
+        className={`absolute top-[65%] right-[4%] xl:right-[10%] z-20 max-w-[220px] hidden md:block transition-opacity duration-1000 delay-700`}
         style={{
           transform: textTransform,
           opacity: loaded ? textOpacity : 0

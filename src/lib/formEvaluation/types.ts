@@ -58,6 +58,7 @@ export interface FormEvaluationResult {
     issues: FormIssue[];
     positives: string[];
     overallScore: number; // 0-100
+    formScore?: number; // legacy compatibility
     cameraSetupIssue?: string; // if confidence too low
 }
 

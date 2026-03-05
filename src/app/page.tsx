@@ -38,7 +38,7 @@ export default function Home() {
         {/* Tech Section - Museum / Gallery Aesthetic */}
         <section
           ref={sectionRef}
-          className="py-40 px-6 lg:px-12 relative bg-black"
+          className="pt-16 pb-20 px-6 lg:px-12 relative bg-black"
         >
           <div className="bg-noise absolute inset-0 pointer-events-none" />
 
@@ -113,7 +113,7 @@ export default function Home() {
 
         {/* Minimalist CTA Footer area */}
         <section
-          className="py-40 px-6 lg:px-12 relative bg-black flex flex-col items-center justify-center text-center overflow-hidden"
+          className="pt-16 pb-40 px-6 lg:px-12 relative bg-black flex flex-col items-center justify-center text-center overflow-hidden"
         >
           <div className="bg-noise absolute inset-0 pointer-events-none" />
 

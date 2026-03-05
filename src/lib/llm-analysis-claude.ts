@@ -5,6 +5,7 @@
 
 import type { PoseComparisonResult } from "./pose-comparison";
 import type { Exercise } from "./supabase";
+import type { FormEvaluationResult } from "./formEvaluation/types";
 
 export interface FormFeedback {
   summary: string;
@@ -26,7 +27,7 @@ export interface FormFeedback {
  */
 export async function generateFeedbackWithClaude(
   exercise: Exercise,
-  comparison: PoseComparisonResult,
+  comparison: PoseComparisonResult | FormEvaluationResult | Record<string, unknown>,
   keyFrameImages?: string[]
 ): Promise<FormFeedback> {
   try {
@@ -46,7 +47,7 @@ export async function generateFeedbackWithClaude(
       throw new Error(`API error: ${response.statusText}`);
     }
 
-    const data = await response.json() as any;
+    const data = await response.json() as { feedback: FormFeedback };
     return data.feedback;
   } catch (error) {
     console.error("Error calling LLM analysis API:", error);
@@ -61,14 +62,13 @@ export async function generateFeedbackWithClaude(
  */
 function generateFallbackFeedback(
   exercise: Exercise,
-  evaluation: FormEvaluationResult | any
+  evaluation: FormEvaluationResult | PoseComparisonResult | Record<string, unknown>
 ): FormFeedback {
   // Try to safely extract score and issues from either format
-  const formScore = evaluation?.overallScore ?? evaluation?.formScore ?? 75;
-  const issues = evaluation?.issues ?? evaluation?.criticalIssues ?? [];
-  const positives = evaluation?.positives ?? [];
-  const validReps = evaluation?.validReps ?? 0;
-  const totalReps = evaluation?.totalReps ?? 0;
+  const ev = evaluation as { overallScore?: number; formScore?: number; issues?: unknown[]; criticalIssues?: unknown[]; positives?: unknown[] };
+  const formScore = ev?.overallScore ?? ev?.formScore ?? 75;
+  const issues = ev?.issues ?? ev?.criticalIssues ?? [];
+  const positives = ev?.positives ?? [];
 
   let summary = "";
   if (formScore >= 90) {
@@ -82,12 +82,13 @@ function generateFallbackFeedback(
   }
 
   // Formatting strings
-  const stringifyItem = (item: any) => {
+  const stringifyItem = (item: unknown) => {
     if (typeof item === 'string') return item;
     if (typeof item === 'object' && item !== null) {
-      if (item.aspect && item.description) return `${item.aspect}: ${item.description}`;
-      if (item.name) return item.name;
-      if (item.description) return item.description;
+      const obj = item as Record<string, unknown>;
+      if ('aspect' in obj && 'description' in obj) return `${obj.aspect}: ${obj.description}`;
+      if ('name' in obj) return String(obj.name);
+      if ('description' in obj) return String(obj.description);
     }
     return "Unknown item";
   };

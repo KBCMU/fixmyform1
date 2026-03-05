@@ -40,7 +40,7 @@ export type Database = {
           reference_video_id: string;
           frame_number: number;
           timestamp_ms: number;
-          pose_data: any;
+          pose_data: unknown;
           confidence: number;
           created_at: string;
         };
@@ -53,8 +53,8 @@ export type Database = {
           video_url: string | null;
           form_score: number;
           overall_similarity: number;
-          comparison_data: any;
-          feedback_data: any;
+          comparison_data: unknown;
+          feedback_data: unknown;
           created_at: string;
         };
       };

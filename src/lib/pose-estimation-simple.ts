@@ -68,7 +68,7 @@ export class PoseEstimationService {
 
     // Simulate loading
     await new Promise((resolve) => setTimeout(resolve, 500));
-    
+
     this.isInitialized = true;
     console.log("Pose estimation service initialized (placeholder mode)");
     console.log("Install @mediapipe/tasks-vision to enable real pose detection");
@@ -81,6 +81,8 @@ export class PoseEstimationService {
     imageElement: HTMLVideoElement | HTMLImageElement | HTMLCanvasElement,
     timestamp?: number
   ): Promise<PoseEstimationResult | null> {
+    void imageElement;
+    void timestamp;
     if (!this.isInitialized) {
       await this.initialize();
     }
@@ -128,7 +130,7 @@ export class PoseEstimationService {
     // Simulate processing
     for (let i = 0; i < numFrames; i++) {
       await new Promise((resolve) => setTimeout(resolve, 50));
-      
+
       const result = await this.estimatePose(videoElement, i * interval);
       if (result) {
         results.push(result);

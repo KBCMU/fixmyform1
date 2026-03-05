@@ -14,7 +14,7 @@ interface ChatMessage {
 interface ChatBoxProps {
   exercise: Exercise;
   feedback: FormFeedback;
-  evaluation: FormEvaluationResult | any;
+  evaluation: FormEvaluationResult | null | undefined;
 }
 
 export default function ChatBox({ exercise, feedback, evaluation }: ChatBoxProps) {

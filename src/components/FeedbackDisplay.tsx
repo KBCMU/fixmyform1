@@ -7,7 +7,7 @@ import ChatBox from "./ChatBox";
 
 interface FeedbackDisplayProps {
   feedback: FormFeedback;
-  evaluation: FormEvaluationResult | any;
+  evaluation: FormEvaluationResult | null | undefined;
   exercise: Exercise;
   onReset: () => void;
 }

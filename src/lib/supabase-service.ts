@@ -4,11 +4,7 @@
  */
 
 import { supabase } from "./supabase";
-import type { Exercise, ReferenceVideo, PoseKeyframe, AnalysisHistory } from "./supabase";
-import type { PoseComparisonResult } from "./pose-comparison";
-import type { FormFeedback } from "./llm-analysis-claude";
-import type { PoseKeypoints } from "./pose-estimation-v2";
-import { convertPoseDataToPoseKeypoints } from "./pose-data-converter";
+import type { Exercise, AnalysisHistory } from "./supabase";
 
 /**
  * Get all exercises

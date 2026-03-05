@@ -7,18 +7,6 @@ import type { PoseFrame, Rep, RepSegmentationConfig } from "./types";
 import { calculateKneeAngle } from "../angle-calculator";
 
 /**
- * Calculate velocity of angle change between frames
- */
-function calculateAngleVelocity(
-    angle1: number,
-    angle2: number,
-    timeDelta: number
-): number {
-    if (timeDelta === 0) return 0;
-    return (angle2 - angle1) / (timeDelta / 1000); // degrees per second
-}
-
-/**
  * Detect peaks (local maxima) in angle data
  */
 function detectPeaks(angles: number[], minDistance: number = 5): number[] {

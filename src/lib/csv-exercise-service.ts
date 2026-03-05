@@ -23,18 +23,18 @@ function parseCSV(csvText: string): CSVExerciseRow[] {
 
   // Parse header
   const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-  
+
   // Find column indices
-  const exerciseIdx = headers.findIndex(h => 
+  const exerciseIdx = headers.findIndex(h =>
     h.toLowerCase().includes('exercise') && h.toLowerCase().includes('name')
   );
-  const videoIdx = headers.findIndex(h => 
+  const videoIdx = headers.findIndex(h =>
     h.toLowerCase().includes('video') && h.toLowerCase().includes('link')
   );
-  const primaryIdx = headers.findIndex(h => 
+  const primaryIdx = headers.findIndex(h =>
     h.toLowerCase().includes('primary') && h.toLowerCase().includes('muscle')
   );
-  
+
   // Find all secondary muscle columns
   const secondaryIndices: number[] = [];
   headers.forEach((h, idx) => {
@@ -57,7 +57,7 @@ function parseCSV(csvText: string): CSVExerciseRow[] {
     const values: string[] = [];
     let current = '';
     let inQuotes = false;
-    
+
     for (let j = 0; j < line.length; j++) {
       const char = line[j];
       if (char === '"') {
@@ -75,12 +75,12 @@ function parseCSV(csvText: string): CSVExerciseRow[] {
 
     const exercise = values[exerciseIdx]?.replace(/^"|"$/g, '') || '';
     const videoLink = videoIdx >= 0 ? (values[videoIdx]?.replace(/^"|"$/g, '') || '') : '';
-    
+
     // Get primary muscle(s) - handle cases where primary muscle contains commas
-    let primaryMuscle = primaryIdx >= 0 ? (values[primaryIdx]?.replace(/^"|"$/g, '') || '') : '';
+    const primaryMuscle = primaryIdx >= 0 ? (values[primaryIdx]?.replace(/^"|"$/g, '') || '') : '';
     // If primary muscle contains commas, split it (e.g., "Front Deltoids, Lateral Deltoids")
     const primaryMuscles = primaryMuscle.split(',').map(m => m.trim()).filter(m => m.length > 0);
-    
+
     // Collect all secondary muscles from multiple columns
     const secondaryMusclesList: string[] = [];
     secondaryIndices.forEach(idx => {
@@ -111,7 +111,7 @@ function parseCSV(csvText: string): CSVExerciseRow[] {
  */
 function parseMuscles(muscleString: string): string[] {
   if (!muscleString) return [];
-  
+
   // Split by comma, but be smart about it
   // Common muscle pairs that contain commas: "Front Deltoids, Lateral Deltoids"
   // We'll split by comma and trim each part
@@ -124,10 +124,10 @@ function parseMuscles(muscleString: string): string[] {
 /**
  * Convert CSV row to Exercise type
  */
-function csvRowToExercise(row: CSVExerciseRow, index: number): Exercise {
+function csvRowToExercise(row: CSVExerciseRow): Exercise {
   const targetMuscles = parseMuscles(row.target_muscles);
   const secondaryMuscles = parseMuscles(row.secondary_muscles);
-  
+
   // Determine category based on muscles (fallback logic)
   let category: Exercise['category'] = 'full-body';
   if (targetMuscles.length > 0) {
@@ -181,7 +181,7 @@ export async function loadExercisesFromCSV(): Promise<Exercise[]> {
   try {
     // Try to fetch from public/data directory
     const response = await fetch('/data/barbell_exercises.csv');
-    
+
     if (!response.ok) {
       if (response.status === 404) {
         throw new Error('barbell_exercises.csv not found. Please place it in the public/data/ directory.');
@@ -190,18 +190,18 @@ export async function loadExercisesFromCSV(): Promise<Exercise[]> {
     }
 
     const csvText = await response.text();
-    
+
     if (!csvText || csvText.trim().length === 0) {
       throw new Error('CSV file is empty');
     }
 
     const rows = parseCSV(csvText);
-    
+
     if (rows.length === 0) {
       throw new Error('No exercises found in CSV file. Please check the format.');
     }
-    
-    cachedExercises = rows.map((row, index) => csvRowToExercise(row, index));
+
+    cachedExercises = rows.map((row) => csvRowToExercise(row));
     return cachedExercises;
   } catch (error) {
     console.error('Error loading exercises from CSV:', error);
@@ -229,7 +229,7 @@ export async function getAllExercises(): Promise<Exercise[]> {
 export async function searchExercises(query: string): Promise<Exercise[]> {
   const exercises = await loadExercisesFromCSV();
   const lowerQuery = query.toLowerCase();
-  
+
   return exercises.filter((exercise) => {
     return (
       exercise.name.toLowerCase().includes(lowerQuery) ||

@@ -58,7 +58,7 @@ export default function PoseVisualization({
     ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
     // Convert our keypoints format to MediaPipe format for drawing
-    const landmarks = convertToMediaPipeLandmarks(result.keypoints);
+    const landmarks = convertToMediaPipeLandmarks(result.keypoints as Record<string, { x: number; y: number; z?: number; visibility?: number }>);
 
     // Draw pose
     drawConnectors(ctx, landmarks, POSE_CONNECTIONS, {
@@ -73,7 +73,7 @@ export default function PoseVisualization({
   }, [videoElement, poseResults, currentFrame]);
 
   // Convert our keypoints to MediaPipe format
-  const convertToMediaPipeLandmarks = (keypoints: any) => {
+  const convertToMediaPipeLandmarks = (keypoints: Record<string, { x: number; y: number; z?: number; visibility?: number }>) => {
     const landmarks: Array<{ x: number; y: number; z?: number; visibility?: number }> = [];
     const keys = [
       "nose",

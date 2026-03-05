@@ -10,9 +10,10 @@
  * 6. Return complete analysis
  */
 
-import { WorkflowEntrypoint, type WorkflowStep } from "cloudflare:workers";
+import { WorkflowEntrypoint } from "cloudflare:workers";
 import { LegExtensionEvaluator, MachinePecDeckEvaluator } from "../lib/formEvaluation";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Env = Record<string, any>;
 
 export interface WorkflowInput {
@@ -35,8 +36,10 @@ export interface WorkflowOutput {
 }
 
 export class AnalyzeFormWorkflow extends WorkflowEntrypoint<Env, WorkflowInput> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async run(event: any, step: any) {
-    const { sessionId, exerciseType, videoUrl, agentName } = event.payload;
+    const { exerciseType, videoUrl, agentName } = event.payload;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const env = this.env as any;
 
     try {
@@ -87,6 +90,7 @@ export class AnalyzeFormWorkflow extends WorkflowEntrypoint<Env, WorkflowInput> 
           evaluator = new LegExtensionEvaluator();
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const result = evaluator.evaluate(poseData as any);
 
         return result;
@@ -123,13 +127,13 @@ export class AnalyzeFormWorkflow extends WorkflowEntrypoint<Env, WorkflowInput> 
                 content: `Exercise: ${exerciseType}
                 
                 Evaluation Results:
-                Score: ${evaluation.score}
+                Score: ${(evaluation as Record<string, unknown>).score}
                 
                 Issues Found:
-                ${evaluation.issues.map((i: any) => `- ${i.type}: ${i.message}`).join("\n")}
+                ${((evaluation as Record<string, unknown>).issues as Array<{ type?: string; name?: string; message?: string; description?: string }>).map(i => `- ${i.type || i.name}: ${i.message || i.description}`).join("\n")}
                 
                 Positives:
-                ${evaluation.positives.map((p: any) => `- ${p.message}`).join("\n")}
+                ${((evaluation as Record<string, unknown>).positives as Array<{ message?: string } | string>).map(p => typeof p === 'string' ? `- ${p}` : `- ${p.message}`).join("\n")}
                 
                 Provide your analysis in JSON format:
                 {

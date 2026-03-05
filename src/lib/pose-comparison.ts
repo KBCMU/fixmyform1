@@ -85,15 +85,15 @@ function calculateJointDifferences(
     ref: keyof PoseKeypoints;
     importance: number;
   }> = [
-    { name: "Left Shoulder", user: "leftShoulder", ref: "leftShoulder", importance: 0.9 },
-    { name: "Right Shoulder", user: "rightShoulder", ref: "rightShoulder", importance: 0.9 },
-    { name: "Left Elbow", user: "leftElbow", ref: "leftElbow", importance: 0.8 },
-    { name: "Right Elbow", user: "rightElbow", ref: "rightElbow", importance: 0.8 },
-    { name: "Left Hip", user: "leftHip", ref: "leftHip", importance: 1.0 },
-    { name: "Right Hip", user: "rightHip", ref: "rightHip", importance: 1.0 },
-    { name: "Left Knee", user: "leftKnee", ref: "leftKnee", importance: 0.9 },
-    { name: "Right Knee", user: "rightKnee", ref: "rightKnee", importance: 0.9 },
-  ];
+      { name: "Left Shoulder", user: "leftShoulder", ref: "leftShoulder", importance: 0.9 },
+      { name: "Right Shoulder", user: "rightShoulder", ref: "rightShoulder", importance: 0.9 },
+      { name: "Left Elbow", user: "leftElbow", ref: "leftElbow", importance: 0.8 },
+      { name: "Right Elbow", user: "rightElbow", ref: "rightElbow", importance: 0.8 },
+      { name: "Left Hip", user: "leftHip", ref: "leftHip", importance: 1.0 },
+      { name: "Right Hip", user: "rightHip", ref: "rightHip", importance: 1.0 },
+      { name: "Left Knee", user: "leftKnee", ref: "leftKnee", importance: 0.9 },
+      { name: "Right Knee", user: "rightKnee", ref: "rightKnee", importance: 0.9 },
+    ];
 
   keyJoints.forEach(({ name, user, ref, importance }) => {
     const userJoint = userPose[user];
@@ -133,7 +133,7 @@ function normalizePoseCoordinates(pose: PoseKeypoints): PoseKeypoints {
   }
 
   const normalized: PoseKeypoints = { ...pose };
-  
+
   // Check if coordinates are already normalized (typically 0-1 range)
   // If any coordinate > 1, assume pixel space and normalize
   let maxCoord = 0;
@@ -213,7 +213,7 @@ function generateDescription(
   severity: string
 ): string {
   const angle = Math.round(angleDiff);
-  
+
   if (severity === "good") {
     return `${joint} position is correct`;
   } else if (severity === "minor") {
@@ -270,7 +270,7 @@ export function compareVideoWithReferences(
     const sampledUserPoses = userPoses.slice(0, maxUserPoses);
     const sampledRefPoses = referencePoses.slice(0, maxRefPoses);
 
-    const comparisons = sampledUserPoses.map((userPose, idx) => {
+    const comparisons = sampledUserPoses.map((userPose) => {
       try {
         const bestMatch = sampledRefPoses
           .map((refPose) => {
@@ -288,7 +288,7 @@ export function compareVideoWithReferences(
             }
           })
           .sort((a, b) => b.overallSimilarity - a.overallSimilarity)[0];
-        
+
         return bestMatch;
       } catch {
         return {

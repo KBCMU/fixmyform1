@@ -206,3 +206,10 @@ next-env.d.ts
 .cursor/
 .agent/
 medicly/
+.vercel
+
+# Local App execution logs and output
+*.txt
+*.log
+eslint_output.json
+git_status.txt

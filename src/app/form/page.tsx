@@ -32,9 +32,8 @@ export default function FormPage() {
   const [currentStep, setCurrentStep] = useState<WorkflowStep>("select-exercise");
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [poseResults, setPoseResults] = useState<PoseEstimationResult[]>([]);
-  const [evaluation, setEvaluation] = useState<FormEvaluationResult | any>(null);
+  const [evaluation, setEvaluation] = useState<FormEvaluationResult | null>(null);
   const [feedback, setFeedback] = useState<FormFeedback | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -53,7 +52,6 @@ export default function FormPage() {
   const handlePoseDetected = async (results: PoseEstimationResult[], videoUrlFromUpload?: string) => {
     setPoseResults(results);
     setCurrentStep("analyzing");
-    setIsAnalyzing(true);
 
     if (videoUrlFromUpload && !videoUrl) {
       setVideoUrl(videoUrlFromUpload);
@@ -72,7 +70,17 @@ export default function FormPage() {
       } else {
         const userPoses = results.map((r) => r.keypoints);
         try {
-          evalResult = analyzeExerciseForm(selectedExercise!.exercise_id, userPoses);
+          const comp = analyzeExerciseForm(selectedExercise!.exercise_id, userPoses) as unknown as Record<string, unknown>;
+          evalResult = {
+            exercise: selectedExercise?.exercise_id || "unknown",
+            totalReps: 1,
+            validReps: 1,
+            issues: (Array.isArray(comp?.criticalIssues) ? comp.criticalIssues : []).map((desc: string) => ({ name: 'Issue', severity: 'severe', affectedReps: 1, confidence: 1, description: desc })),
+            positives: ["Attempted exercise"],
+            overallScore: comp?.formScore || 70,
+            formScore: comp?.formScore || 70,
+            ...comp
+          } as unknown as FormEvaluationResult;
         } catch {
           evalResult = {
             exercise: selectedExercise?.exercise_id || "unknown",
@@ -114,8 +122,6 @@ export default function FormPage() {
       console.error("Analysis error:", error);
       alert("Error analyzing video. Please try again.");
       setCurrentStep("upload-video");
-    } finally {
-      setIsAnalyzing(false);
     }
   };
 
@@ -332,7 +338,7 @@ export default function FormPage() {
                               : "1px solid rgba(255, 255, 255, 0.2)",
                           borderRadius: "50%",
                           ...(item.active && !item.done
-                            ? { animation: "spin 1s linear infinite", borderTopColor: "transparent" as any, borderRadius: "50%" }
+                            ? { animation: "spin 1s linear infinite", borderTopColor: "transparent" as const, borderRadius: "50%" }
                             : {}),
                         }}
                       >

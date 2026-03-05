@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * API Route for Chat with OpenRouter AI
  * Handles follow-up questions after form analysis
@@ -146,7 +147,6 @@ export async function POST(request: NextRequest) {
 function constructSystemMessage(
   exercise: Exercise,
   feedback: FormFeedback,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   evaluation: FormEvaluationResult | any
 ): string {
   // Safely handle potentially undefined arrays

@@ -25,6 +25,7 @@ export interface ReferenceVideo {
  * In production, these would be actual extracted poses from reference videos
  */
 export function generateMockReferencePoses(exerciseId: string): PoseKeypoints[] {
+  void exerciseId;
   // Generate 5 keyframes representing good form
   return [
     generateMockPose(0.3, 0.4), // Starting position
@@ -69,7 +70,7 @@ export async function getReferencePosesForExercise(
 ): Promise<PoseKeypoints[]> {
   // Simulate database query
   await new Promise((resolve) => setTimeout(resolve, 300));
-  
+
   return generateMockReferencePoses(exerciseId);
 }
 

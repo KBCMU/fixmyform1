@@ -1,4 +1,4 @@
-import { FormIssue, FormEvaluationResult, ExerciseEvaluator, PoseFrame } from './types';
+import { FormIssue, FormEvaluationResult, ExerciseEvaluator, PoseFrame, Rep } from './types';
 
 const PEC_DECK_THRESHOLDS = {
     // Elbow angles (degrees)
@@ -115,8 +115,18 @@ interface PhaseSnapshot {
 // Main Evaluator
 // ============================================================
 export class MachinePecDeckEvaluator implements ExerciseEvaluator {
+    public exerciseName = 'Machine Pec-Deck';
     private readonly EXERCISE_NAME = 'Machine Pec-Deck';
     private readonly T = PEC_DECK_THRESHOLDS;
+
+    segmentReps(): Rep[] {
+        // Implement interface requirement conceptually
+        return [];
+    }
+
+    validateRep(): boolean {
+        return true;
+    }
 
     evaluate(frames: PoseFrame[]): FormEvaluationResult {
         if (frames.length < 10) {
@@ -138,68 +148,71 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
         const repCount = phases.filter(p => p.phase === 'LOCKOUT').length;
 
         return {
-            exerciseName: this.EXERCISE_NAME,
+            exercise: this.EXERCISE_NAME,
             overallScore: score,
-            repCount,
             validReps: repCount, // Assume valid for now
             totalReps: repCount,
             issues,
             positives: [
-                { type: 'ROM', message: 'Good overall range of motion.' }
+                'Good overall range of motion.'
             ],
-            phaseSnapshots: phases as any,
+            phaseSnapshots: phases as unknown as undefined,
             jointAngleSummary: this.buildJointSummary(metrics),
             metadata: {
                 totalFrames: frames.length,
-                durationMs: frames[frames.length - 1].timestampMs - frames[0].timestampMs,
+                durationMs: frames[frames.length - 1].timestamp - frames[0].timestamp,
                 evaluatedAt: new Date().toISOString(),
             },
-        };
+        } as FormEvaluationResult;
     }
 
     private extractFrameMetrics(frames: PoseFrame[]): FrameMetrics[] {
         return frames.map((frame, i) => {
-            const lm = frame.landmarks;
+            const lm = frame.pose;
 
-            const leftElbow = GeometryUtils.angleDeg(lm.leftShoulder, lm.leftElbow, lm.leftWrist);
-            const rightElbow = GeometryUtils.angleDeg(lm.rightShoulder, lm.rightElbow, lm.rightWrist);
-            const leftKnee = GeometryUtils.angleDeg(lm.leftHip, lm.leftKnee, lm.leftAnkle);
-            const rightKnee = GeometryUtils.angleDeg(lm.rightHip, lm.rightKnee, lm.rightAnkle);
+            const leftElbow = lm.leftShoulder && lm.leftElbow && lm.leftWrist ?
+                GeometryUtils.angleDeg(lm.leftShoulder, lm.leftElbow, lm.leftWrist) : 90;
+            const rightElbow = lm.rightShoulder && lm.rightElbow && lm.rightWrist ?
+                GeometryUtils.angleDeg(lm.rightShoulder, lm.rightElbow, lm.rightWrist) : 90;
+            const leftKnee = lm.leftHip && lm.leftKnee && lm.leftAnkle ?
+                GeometryUtils.angleDeg(lm.leftHip, lm.leftKnee, lm.leftAnkle) : 90;
+            const rightKnee = lm.rightHip && lm.rightKnee && lm.rightAnkle ?
+                GeometryUtils.angleDeg(lm.rightHip, lm.rightKnee, lm.rightAnkle) : 90;
 
-            const hipMid = GeometryUtils.midpoint(lm.leftHip, lm.rightHip);
-            const shoulderMid = GeometryUtils.midpoint(lm.leftShoulder, lm.rightShoulder);
+            const hipMid = lm.leftHip && lm.rightHip ? GeometryUtils.midpoint(lm.leftHip, lm.rightHip) : { x: 0, y: 0 };
+            const shoulderMid = lm.leftShoulder && lm.rightShoulder ? GeometryUtils.midpoint(lm.leftShoulder, lm.rightShoulder) : { x: 0, y: 0 };
             const torsoAngle = GeometryUtils.angleFromVertical(hipMid, shoulderMid);
 
             const torsoHeight = GeometryUtils.distance(hipMid, shoulderMid);
-            const leftElevRatio = torsoHeight > 0
-                ? Math.abs(lm.leftEar?.y - lm.leftShoulder.y) / torsoHeight
+            const leftElevRatio = torsoHeight > 0 && lm.leftEar && lm.leftShoulder
+                ? Math.abs(lm.leftEar.y - lm.leftShoulder.y) / torsoHeight
                 : 0.2;
-            const rightElevRatio = torsoHeight > 0
-                ? Math.abs(lm.rightEar?.y - lm.rightShoulder.y) / torsoHeight
+            const rightElevRatio = torsoHeight > 0 && lm.rightEar && lm.rightShoulder
+                ? Math.abs(lm.rightEar.y - lm.rightShoulder.y) / torsoHeight
                 : 0.2;
 
-            const leftWristAngle = GeometryUtils.angleDeg(lm.leftElbow, lm.leftWrist, {
+            const leftWristAngle = lm.leftElbow && lm.leftWrist ? GeometryUtils.angleDeg(lm.leftElbow, lm.leftWrist, {
                 x: lm.leftWrist.x + (lm.leftWrist.x - lm.leftElbow.x),
                 y: lm.leftWrist.y + (lm.leftWrist.y - lm.leftElbow.y),
-            });
-            const rightWristAngle = GeometryUtils.angleDeg(lm.rightElbow, lm.rightWrist, {
+            }) : 180;
+            const rightWristAngle = lm.rightElbow && lm.rightWrist ? GeometryUtils.angleDeg(lm.rightElbow, lm.rightWrist, {
                 x: lm.rightWrist.x + (lm.rightWrist.x - lm.rightElbow.x),
                 y: lm.rightWrist.y + (lm.rightWrist.y - lm.rightElbow.y),
-            });
+            }) : 180;
 
-            const leftShoulderAbd = GeometryUtils.angleDeg(lm.leftHip, lm.leftShoulder, lm.leftElbow);
-            const rightShoulderAbd = GeometryUtils.angleDeg(lm.rightHip, lm.rightShoulder, lm.rightElbow);
+            const leftShoulderAbd = lm.leftHip && lm.leftShoulder && lm.leftElbow ? GeometryUtils.angleDeg(lm.leftHip, lm.leftShoulder, lm.leftElbow) : 45;
+            const rightShoulderAbd = lm.rightHip && lm.rightShoulder && lm.rightElbow ? GeometryUtils.angleDeg(lm.rightHip, lm.rightShoulder, lm.rightElbow) : 45;
 
-            const prevAvgElbow = i > 0
-                ? (GeometryUtils.angleDeg(frames[i - 1].landmarks.leftShoulder, frames[i - 1].landmarks.leftElbow, frames[i - 1].landmarks.leftWrist) +
-                    GeometryUtils.angleDeg(frames[i - 1].landmarks.rightShoulder, frames[i - 1].landmarks.rightElbow, frames[i - 1].landmarks.rightWrist)) / 2
+            const prevAvgElbow = i > 0 && frames[i - 1].pose.leftShoulder && frames[i - 1].pose.leftElbow && frames[i - 1].pose.leftWrist && frames[i - 1].pose.rightShoulder && frames[i - 1].pose.rightElbow && frames[i - 1].pose.rightWrist
+                ? (GeometryUtils.angleDeg(frames[i - 1].pose.leftShoulder!, frames[i - 1].pose.leftElbow!, frames[i - 1].pose.leftWrist!) +
+                    GeometryUtils.angleDeg(frames[i - 1].pose.rightShoulder!, frames[i - 1].pose.rightElbow!, frames[i - 1].pose.rightWrist!)) / 2
                 : (leftElbow + rightElbow) / 2;
 
             const avgElbow = (leftElbow + rightElbow) / 2;
 
             return {
-                frameIndex: frame.frameIndex,
-                timestampMs: frame.timestampMs,
+                frameIndex: i,
+                timestampMs: frame.timestamp,
                 leftElbowAngle: leftElbow,
                 rightElbowAngle: rightElbow,
                 avgElbowAngle: avgElbow,
@@ -214,8 +227,8 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
                 elbowAngleVelocity: avgElbow - prevAvgElbow,
                 leftKneeAngle: leftKnee,
                 rightKneeAngle: rightKnee,
-                leftAnkle: lm.leftAnkle,
-                rightAnkle: lm.rightAnkle,
+                leftAnkle: lm.leftAnkle || { x: 0, y: 0 },
+                rightAnkle: lm.rightAnkle || { x: 0, y: 0 },
                 torsoHeight,
             };
         });
@@ -230,7 +243,7 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
         let peakElbowInPhase = metrics[0]?.avgElbowAngle ?? 90;
         let lockoutElbowInPhase = metrics[0]?.avgElbowAngle ?? 90;
 
-        const commitPhase = (nextPhase: ExercisePhase, frameIndex: number) => {
+        const commitPhase = (nextPhase: ExercisePhase, frameIndex: number): ExercisePhase => {
             snapshots.push({
                 phase: currentPhase,
                 startFrame: phaseStartFrame,
@@ -239,10 +252,10 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
                 lockoutElbowAngle: lockoutElbowInPhase,
                 totalROM: peakElbowInPhase - lockoutElbowInPhase,
             });
-            currentPhase = nextPhase;
             phaseStartFrame = frameIndex;
             peakElbowInPhase = metrics[frameIndex]?.avgElbowAngle ?? 90;
             lockoutElbowInPhase = metrics[frameIndex]?.avgElbowAngle ?? 90;
+            return nextPhase;
         };
 
         for (let i = 1; i < metrics.length; i++) {
@@ -271,7 +284,7 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
                 if (expectedNext === pendingPhase) {
                     debounceCount++;
                     if (debounceCount >= this.T.PHASE_MIN_HOLD_FRAMES) {
-                        commitPhase(expectedNext, i - debounceCount + 1);
+                        currentPhase = commitPhase(expectedNext, i - debounceCount + 1);
                         pendingPhase = null;
                         debounceCount = 0;
                     }
@@ -308,42 +321,41 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
         }
 
         if (criticalFrames.length >= 3) {
-            const worstFrame = metrics.reduce((prev, curr) => curr.avgShoulderElevationRatio < prev.avgShoulderElevationRatio ? curr : prev);
             issues.push({
-                type: 'SHOULDER_ELEVATION_CRITICAL',
-                severity: 'high',
-                message: 'Severe shoulder shrugging detected.',
-                timestamp: worstFrame.timestampMs,
+                name: 'SHOULDER_ELEVATION_CRITICAL',
+                severity: 'severe',
+                affectedReps: Math.floor(criticalFrames.length / 5) || 1,
+                confidence: 1,
+                description: 'Severe shoulder shrugging detected.',
             });
         } else if (warnFrames.length >= 5) {
-            const worstFrame = metrics.reduce((prev, curr) => curr.avgShoulderElevationRatio < prev.avgShoulderElevationRatio ? curr : prev);
             issues.push({
-                type: 'SHOULDER_ELEVATION_WARNING',
-                severity: 'medium',
-                message: 'Mild shoulder elevation detected.',
-                timestamp: worstFrame.timestampMs,
+                name: 'SHOULDER_ELEVATION_WARNING',
+                severity: 'moderate',
+                affectedReps: Math.floor(warnFrames.length / 5) || 1,
+                confidence: 1,
+                description: 'Mild shoulder elevation detected.',
             });
         }
     }
 
     private detectForwardTorsoLean(metrics: FrameMetrics[], phases: PhaseSnapshot[], issues: FormIssue[]): void {
         let maxDeviation = 0;
-        let worstFrameIndex = 0;
 
         for (const m of metrics) {
             const deviation = Math.abs(m.torsoAngleFromVertical - 90);
             if (deviation > maxDeviation) {
                 maxDeviation = deviation;
-                worstFrameIndex = m.frameIndex;
             }
         }
 
         if (maxDeviation >= this.T.TORSO_FAULT_DEVIATION) {
             issues.push({
-                type: 'TORSO_FORWARD_LEAN',
-                severity: maxDeviation >= 18 ? 'high' : 'medium',
-                message: `Torso deviated ${Math.round(maxDeviation)}° from vertical.`,
-                timestamp: metrics.find(m => m.frameIndex === worstFrameIndex)?.timestampMs ?? 0,
+                name: 'TORSO_FORWARD_LEAN',
+                severity: maxDeviation >= 18 ? 'severe' : 'moderate',
+                affectedReps: 1,
+                confidence: 1,
+                description: `Torso deviated ${Math.round(maxDeviation)}° from vertical.`,
             });
         }
     }
@@ -355,9 +367,11 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
         for (const snap of transitionPhases) {
             if (snap.peakElbowAngle < this.T.ELBOW_ECCENTRIC_PEAK_MIN) {
                 issues.push({
-                    type: 'INCOMPLETE_ECCENTRIC_STRETCH',
-                    severity: snap.peakElbowAngle < 135 ? 'high' : 'medium',
-                    message: `Arms only opened to ${Math.round(snap.peakElbowAngle)}° at peak eccentric.`,
+                    name: 'INCOMPLETE_ECCENTRIC_STRETCH',
+                    severity: snap.peakElbowAngle < 135 ? 'severe' : 'moderate',
+                    affectedReps: 1,
+                    confidence: 1,
+                    description: `Arms only opened to ${Math.round(snap.peakElbowAngle)}° at peak eccentric.`,
                 });
             }
         }
@@ -365,9 +379,11 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
         for (const snap of lockoutPhases) {
             if (snap.lockoutElbowAngle > this.T.ELBOW_LOCKOUT_FAULT) {
                 issues.push({
-                    type: 'INCOMPLETE_CONCENTRIC_SQUEEZE',
-                    severity: snap.lockoutElbowAngle > 100 ? 'high' : 'medium',
-                    message: `Arms only closed to ${Math.round(snap.lockoutElbowAngle)}° at lockout.`,
+                    name: 'INCOMPLETE_CONCENTRIC_SQUEEZE',
+                    severity: snap.lockoutElbowAngle > 100 ? 'severe' : 'moderate',
+                    affectedReps: 1,
+                    confidence: 1,
+                    description: `Arms only closed to ${Math.round(snap.lockoutElbowAngle)}° at lockout.`,
                 });
             }
         }
@@ -377,10 +393,11 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
         const faultFrames = metrics.filter(m => m.leftWristAngle < this.T.WRIST_FAULT || m.rightWristAngle < this.T.WRIST_FAULT);
         if (faultFrames.length >= 3) {
             issues.push({
-                type: 'WRIST_COLLAPSE',
-                severity: 'medium',
-                message: 'Wrist alignment collapsed under load.',
-                timestamp: faultFrames[0].timestampMs
+                name: 'WRIST_COLLAPSE',
+                severity: 'moderate',
+                affectedReps: 1,
+                confidence: 1,
+                description: 'Wrist alignment collapsed under load.',
             });
         }
     }
@@ -396,10 +413,11 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
         }
         if (faultFrames.length >= 3) {
             issues.push({
-                type: 'FOOT_INSTABILITY',
-                severity: 'high',
-                message: 'Significant foot movement detected. Loss of base stability.',
-                timestamp: metrics.find(m => m.frameIndex === faultFrames[0])?.timestampMs
+                name: 'FOOT_INSTABILITY',
+                severity: 'severe',
+                affectedReps: 1,
+                confidence: 1,
+                description: 'Significant foot movement detected. Loss of base stability.',
             });
         }
     }
@@ -414,17 +432,19 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
         const avgKneeAngle = setupFrames.reduce((sum, m) => sum + (m.leftKneeAngle + m.rightKneeAngle) / 2, 0) / setupFrames.length;
         if (avgKneeAngle > 110) {
             issues.push({
-                type: 'KNEE_ANGLE_SEAT_TOO_HIGH',
-                severity: 'high',
-                message: `Knee angle ${Math.round(avgKneeAngle)}° — seat is likely too high.`,
-                timestamp: setupFrames[0].timestampMs
+                name: 'KNEE_ANGLE_SEAT_TOO_HIGH',
+                severity: 'severe',
+                affectedReps: 1,
+                confidence: 1,
+                description: `Knee angle ${Math.round(avgKneeAngle)}° — seat is likely too high.`,
             });
         } else if (avgKneeAngle < 75) {
             issues.push({
-                type: 'KNEE_ANGLE_SEAT_TOO_LOW',
-                severity: 'high',
-                message: `Knee angle ${Math.round(avgKneeAngle)}° — seat is likely too low.`,
-                timestamp: setupFrames[0].timestampMs
+                name: 'KNEE_ANGLE_SEAT_TOO_LOW',
+                severity: 'severe',
+                affectedReps: 1,
+                confidence: 1,
+                description: `Knee angle ${Math.round(avgKneeAngle)}° — seat is likely too low.`,
             });
         }
     }
@@ -457,8 +477,8 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
 
         let penalty = 0;
         for (const issue of issues) {
-            if (issue.severity === 'high') penalty += 15;
-            else if (issue.severity === 'medium') penalty += 8;
+            if (issue.severity === 'severe') penalty += 15;
+            else if (issue.severity === 'moderate') penalty += 8;
             else penalty += 3;
         }
 
@@ -487,9 +507,9 @@ export class MachinePecDeckEvaluator implements ExerciseEvaluator {
             repCount: 0,
             validReps: 0,
             totalReps: 0,
-            issues: [{ type: 'EVALUATION_ERROR', severity: 'medium', message: reason }],
+            issues: [{ name: 'EVALUATION_ERROR', severity: 'moderate', affectedReps: 0, confidence: 1, description: reason }],
             positives: [],
             metadata: { totalFrames: frames.length, durationMs: 0, evaluatedAt: new Date().toISOString() }
-        };
+        } as unknown as FormEvaluationResult;
     }
 }

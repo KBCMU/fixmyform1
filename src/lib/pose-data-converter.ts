@@ -42,12 +42,12 @@ export function convertLandmarksToPoseKeypoints(landmarks: Array<{
     const landmark = landmarks[index];
     // Relaxed validation: allow normalized coordinates (0-1) and check visibility
     // Don't require x > 0 and y > 0 as normalized coords can be 0
-    if (landmark && 
-        typeof landmark.x === 'number' && 
-        typeof landmark.y === 'number' &&
-        !isNaN(landmark.x) && 
-        !isNaN(landmark.y) &&
-        (landmark.visibility === undefined || landmark.visibility > 0.1)) {
+    if (landmark &&
+      typeof landmark.x === 'number' &&
+      typeof landmark.y === 'number' &&
+      !isNaN(landmark.x) &&
+      !isNaN(landmark.y) &&
+      (landmark.visibility === undefined || landmark.visibility > 0.1)) {
       keypoints[key as keyof PoseKeypoints] = {
         x: landmark.x,
         y: landmark.y,
@@ -63,15 +63,18 @@ export function convertLandmarksToPoseKeypoints(landmarks: Array<{
 /**
  * Convert pose_data from Supabase (which may be in different formats) to PoseKeypoints
  */
-export function convertPoseDataToPoseKeypoints(poseData: any): PoseKeypoints {
+export function convertPoseDataToPoseKeypoints(poseData: unknown): PoseKeypoints {
+  if (!poseData || typeof poseData !== 'object') return {};
+  const data = poseData as Record<string, unknown>;
+
   // If it's already in PoseKeypoints format
-  if (poseData.leftShoulder || poseData.rightShoulder) {
+  if (data.leftShoulder || data.rightShoulder) {
     return poseData as PoseKeypoints;
   }
 
   // If it has landmarks array (MediaPipe format)
-  if (poseData.landmarks && Array.isArray(poseData.landmarks)) {
-    return convertLandmarksToPoseKeypoints(poseData.landmarks);
+  if (data.landmarks && Array.isArray(data.landmarks)) {
+    return convertLandmarksToPoseKeypoints(data.landmarks);
   }
 
   // If it's a raw array of landmarks

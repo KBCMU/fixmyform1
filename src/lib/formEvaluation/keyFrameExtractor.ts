@@ -38,7 +38,6 @@ export function extractKeyFrames(frames: PoseFrame[], maxFrames: number = 5): Ke
     }
 
     const keyFrames: KeyFrame[] = [];
-    const totalDuration = frames[frames.length - 1].timestamp - frames[0].timestamp;
 
     // Always include the first and last frames
     keyFrames.push({
@@ -84,10 +83,6 @@ export function extractKeyFrames(frames: PoseFrame[], maxFrames: number = 5): Ke
 
     // If we need more frames (e.g. 5 total), space them out between start->mid and mid->end
     if (maxFrames > 3) {
-        const remainingFrames = maxFrames - 3;
-        const framesBeforeMid = Math.ceil(remainingFrames / 2);
-        const framesAfterMid = Math.floor(remainingFrames / 2);
-
         // Find highest variance frame in the first half
         let maxVarBefore = 0;
         let idxBefore = Math.floor(maxVarianceIdx / 2);
