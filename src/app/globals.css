@@ -1,26 +1,233 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Museum Gallery Palette — Pure Black + High Contrast Warmth */
+  --bg-primary: #000000;
+  --bg-secondary: #050505;
+  --bg-card: #0A0A0A;
+  --bg-elevated: #0F0F0F;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: #AAAAAA;
+  --text-muted: #666666;
+
+  --accent-orange: #E66A23;
+  /* Subdued, elegant warm amber/orange */
+  --accent-amber: #D1834B;
+  --accent-warm: #E2B28B;
+  --accent-orange-dark: #A4430F;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(255, 255, 255, 0.25);
+
+  --danger: #EF4444;
+  --warning: #F59E0B;
+  --success: #22C55E;
+
+  --background: var(--bg-primary);
+  --foreground: var(--text-primary);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-serif: var(--font-cormorant);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================
+   ANIMATIONS — Slow, Elegant, Cinematic
+   ======================== */
+
+@keyframes slowFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes verySlowFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes maskRevealRight {
+  from {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+    opacity: 0;
+  }
+
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 1;
+  }
+}
+
+@keyframes subtleFloat {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1.0);
+  }
+
+  50% {
+    transform: translateY(-8px) scale(1.01);
+  }
+}
+
+@keyframes ambientGlow {
+
+  0%,
+  100% {
+    opacity: 0.15;
+    filter: blur(80px);
+  }
+
+  50% {
+    opacity: 0.25;
+    filter: blur(100px);
+  }
+}
+
+@keyframes rotateSlow {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Animation utilities */
+.animate-slow-fade-in-up {
+  animation: slowFadeInUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.animate-very-slow-fade {
+  animation: verySlowFadeIn 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.animate-mask-reveal {
+  animation: maskRevealRight 1.5s cubic-bezier(0.6, 0.05, 0.1, 1) both;
+}
+
+.animate-subtle-float {
+  animation: subtleFloat 10s ease-in-out infinite;
+}
+
+.animate-ambient-glow {
+  animation: ambientGlow 8s ease-in-out infinite;
+}
+
+.animate-rotate-slow {
+  animation: rotateSlow 60s linear infinite;
+}
+
+/* Stagger delays */
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+.delay-700 {
+  animation-delay: 700ms;
+}
+
+.delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.delay-1200 {
+  animation-delay: 1200ms;
+}
+
+/* ========================
+   REDUCED MOTION
+   ======================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================
+   CUSTOM SCROLLBAR
+   ======================== */
+
+::-webkit-scrollbar {
+  width: 4px;
+  /* Thin, elegant scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ========================
+   UTILITY CLASSES & NOISE
+   ======================== */
+
+.bg-noise {
+  position: relative;
+}
+
+.bg-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Elegant text gradients */
+.text-gradient-gold {
+  background: linear-gradient(to right, #FFFFFF, #E2B28B);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

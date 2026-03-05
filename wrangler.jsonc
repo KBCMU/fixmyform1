@@ -15,4 +15,57 @@
     "enabled": true
   },
   "upload_source_maps": true
+  
+  // Cloudflare bindings commented out for local development
+  // Uncomment and configure when deploying to Cloudflare
+  
+  // Durable Objects for Agents
+  // "durable_objects": {
+  //   "bindings": [
+  //     {
+  //       "name": "FORM_ANALYSIS_AGENT",
+  //       "class_name": "FormAnalysisAgent",
+  //       "script_name": "fixmyform1"
+  //     }
+  //   ]
+  // },
+  
+  // R2 for video storage
+  // "r2_buckets": [
+  //   {
+  //     "binding": "VIDEOS_BUCKET",
+  //     "bucket_name": "fixmyform-videos"
+  //   }
+  // ],
+  
+  // Vectorize for reference pose database
+  // "vectorize": [
+  //   {
+  //     "binding": "VECTORIZE_INDEX",
+  //     "index_name": "reference-poses"
+  //   }
+  // ],
+  
+  // D1 for metadata storage
+  // "d1_databases": [
+  //   {
+  //     "binding": "DB",
+  //     "database_name": "fixmyform-db",
+  //     "database_id": "your-database-id-here"
+  //   }
+  // ],
+  
+  // Workers AI for LLM and pose estimation
+  // "ai": {
+  //   "binding": "AI"
+  // },
+  
+  // Migrations for Durable Objects and D1
+  // "migrations": [
+  //   {
+  //     "tag": "v1",
+  //     "new_sqlite_classes": ["FormAnalysisAgent"],
+  //     "new_classes": ["FormAnalysisAgent"]
+  //   }
+  // ]
 }

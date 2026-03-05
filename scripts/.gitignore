@@ -1,0 +1,5 @@
+data/
+temp/
+*.json
+!tsconfig.json
+
