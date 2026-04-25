@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
 
 export default nextConfig;
 
-// Only init Cloudflare for local dev - skip on Vercel to avoid EPIPE/build failures
-if (!process.env.VERCEL) {
+// Only init Cloudflare for local dev - skip during builds and on Vercel to avoid failures
+if (process.env.NODE_ENV === "development" && !process.env.VERCEL) {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { initOpenNextCloudflareForDev } = require("@opennextjs/cloudflare");
   initOpenNextCloudflareForDev();

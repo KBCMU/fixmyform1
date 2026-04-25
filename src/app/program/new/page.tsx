@@ -43,7 +43,6 @@ export default function ProgramNewPage() {
     weakPoints: [],
   });
   const [currentStepId, setCurrentStepId] = useState<StepId>("experience");
-  const [generatedProgram, setGeneratedProgram] = useState<GeneratedProgram | null>(null);
   const [transitioning, setTransitioning] = useState(false);
 
   useEffect(() => {
@@ -105,7 +104,6 @@ export default function ProgramNewPage() {
   }
 
   function handleGenerated(program: GeneratedProgram) {
-    setGeneratedProgram(program);
     // Persist program to sessionStorage so the [id] page can read it
     try {
       sessionStorage.setItem("fixmyform_generated_program", JSON.stringify(program));

@@ -7,7 +7,7 @@ FixMyForm is an AI-powered biomechanics analysis web application that helps user
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4
-- **Backend/DB**: Supabase & Cloudflare Workers (OpenNextJS)
+- **Backend/DB**: Supabase & Vercel
 - **AI/ML**: MediaPipe Vision & Openrouter AI models
 
 ## Architecture
@@ -33,7 +33,7 @@ FixMyForm is an AI-powered biomechanics analysis web application that helps user
 - `npm run dev`: Start local development server
 - `npm run build`: Build the Next.js application
 - `npm run check`: Run build and typecheck
-- `npm run deploy`: Deploy to Cloudflare using OpenNextJS
+- **Deployment**: `git push` (Vercel auto-deploys from main branch)
 
 # Project Orchestration Rules
 
