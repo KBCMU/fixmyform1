@@ -213,3 +213,4 @@ medicly/
 *.log
 eslint_output.json
 git_status.txt
+.tmp-program-builder-run/

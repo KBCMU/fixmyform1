@@ -1,14 +1,24 @@
-# Components (generated 2026-04-23)
+# Components (generated 2026-04-25)
 # (c)=client component. UI primitives (shadcn/radix) omitted.
 
 ## src\components
-(c) ChatBox  exercise, feedback, evaluation
-(c) ExerciseSelector  onSelectExercise, selectedExercise
+(c) AuthGate
+(c) ChatBox
+(c) ExerciseCard
+(c) ExerciseSelector
+(c) ExperienceStep
 (c) Features
-(c) FeedbackDisplay  feedback, evaluation, exercise, onReset
+(c) FeedbackDisplay
     Footer
+(c) GenerateStep
 (c) Header
 (c) Hero
-(c) PoseVideoPlayer  videoUrl, poseResults, interval
-(c) PoseVisualization  videoElement, poseResults, currentFrame
-(c) VideoUpload  onPoseDetected, onError, exerciseType, onVideoLoaded
+(c) LocationStep
+(c) PoseVideoPlayer
+(c) PoseVisualization
+(c) ProgramView
+(c) ScheduleStep
+(c) SplitStep
+(c) VideoUpload
+(c) WeakPointsStep
+(c) WeekView

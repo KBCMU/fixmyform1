@@ -1,4 +1,4 @@
-# Library Exports (generated 2026-04-23)
+# Library Exports (generated 2026-04-25)
 # fn=function, class=class. Type-only files omitted.
 
 ## src\lib
@@ -78,6 +78,18 @@ utils.ts
 keyFrameExtractor.ts  fn extractKeyFrames
 legExtensionEvaluator.ts  fn LegExtensionEvaluator
 machinePecDeckEvaluator.ts  fn MachinePecDeckEvaluator
+
+## src\lib\programBuilder
+exerciseCatalog.ts
+  fn getExercisesByPattern
+  fn getExercisesByMuscle
+  fn getExercisesForGym
+  fn getExerciseById
+exerciseSelector.ts  fn selectExercises
+programAssembler.ts  fn generateProgram
+repRangeAssigner.ts  fn getRepRange
+splitRecommender.ts  fn getRecommendedSplits
+volumeCalculator.ts  fn calculateVolume
 
 ## src\lib\supabase
 client.ts  fn createClient

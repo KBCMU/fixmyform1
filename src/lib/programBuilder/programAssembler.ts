@@ -14,7 +14,8 @@ import { getRecommendedSplits } from './splitRecommender';
 export function generateProgram(profile: UserProfile): GeneratedProgram {
   // 1. Get the selected split definition
   const availableSplits = getRecommendedSplits(profile.daysPerWeek);
-  const split = availableSplits.find((s) => s.type === profile.selectedSplit);
+  const split = availableSplits.find((s) => s.type === profile.selectedSplit && s.daysPerWeek === profile.daysPerWeek)
+    || availableSplits.find((s) => s.type === profile.selectedSplit);
 
   if (!split) {
     throw new Error(`Split type '${profile.selectedSplit}' not available for ${profile.daysPerWeek} days per week`);

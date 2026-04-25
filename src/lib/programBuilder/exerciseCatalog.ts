@@ -632,9 +632,9 @@ export const EXERCISE_CATALOG: CatalogExercise[] = [
     techniqueCues: ['Back against pad', 'Feet under pad', 'Curl with control'],
   },
   {
-    id: '45-leg-extension',
-    name: '45 Degree Leg Press Calf Raise',
-    movementPattern: 'knee_flexion',
+    id: '45-degree-extension',
+    name: '45 Degree Extension',
+    movementPattern: 'hip_extension',
     primaryMuscles: ['hamstrings'],
     lengthTension: 'lengthened',
     equipment: ['machine'],
