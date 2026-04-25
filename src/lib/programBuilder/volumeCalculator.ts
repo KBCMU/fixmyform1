@@ -57,6 +57,9 @@ export function calculateVolume(profile: UserProfile, split: SplitDefinition): V
     calves: 0,
     core: 0,
     forearms: 0,
+    traps: 0,
+    adductors: 0,
+    abductors: 0,
   };
 
   // Count frequency for each muscle

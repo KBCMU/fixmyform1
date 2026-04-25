@@ -23,16 +23,20 @@ export type MovementPattern =
   | 'horizontal_pull'
   | 'vertical_pull'
   | 'hip_hinge'
+  | 'hip_extension'
   | 'squat'
   | 'lunge'
   | 'knee_flexion'
   | 'knee_extension'
   | 'hip_abduction'
   | 'hip_adduction'
+  | 'adduction'
+  | 'abduction'
   | 'shoulder_abduction'
   | 'shoulder_flexion'
   | 'elbow_flexion'
   | 'elbow_extension'
+  | 'trap_row'
   | 'calf_raise'
   | 'core_flexion'
   | 'core_rotation';
@@ -51,7 +55,10 @@ export type MuscleGroup =
   | 'glutes'
   | 'calves'
   | 'core'
-  | 'forearms';
+  | 'forearms'
+  | 'traps'
+  | 'adductors'
+  | 'abductors';
 
 /**
  * Muscle bias for advanced categorization (specific regions)
