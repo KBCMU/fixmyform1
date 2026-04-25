@@ -58,6 +58,35 @@ export type Database = {
           created_at: string;
         };
       };
+      user_programs: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          profile: unknown;
+          program_data: unknown;
+          llm_explanation: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          profile: unknown;
+          program_data: unknown;
+          llm_explanation?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          name?: string;
+          profile?: unknown;
+          program_data?: unknown;
+          llm_explanation?: string | null;
+          updated_at?: string;
+        };
+      };
     };
   };
 };
