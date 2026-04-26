@@ -3,8 +3,8 @@
  * POST /api/program/generate
  */
 
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { generateProgram } from "@/lib/programBuilder/programAssembler";
 import type {
   UserProfile,
@@ -151,15 +151,9 @@ Review if any exercises should be swapped to better target these weak areas. Onl
 
 export async function POST(request: NextRequest) {
   try {
-    // Auth check
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse request body

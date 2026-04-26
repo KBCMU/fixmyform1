@@ -73,7 +73,7 @@ export default function AuthGate() {
 
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         <Link
-          href={`/signup?redirect=${encodeURIComponent(redirect)}`}
+          href={`/sign-in?redirect_url=${encodeURIComponent(redirect)}`}
           style={{
             display: "block",
             background: "#E66A23",
@@ -98,7 +98,7 @@ export default function AuthGate() {
         </Link>
 
         <Link
-          href={`/login?redirect=${encodeURIComponent(redirect)}`}
+          href={`/sign-in?redirect_url=${encodeURIComponent(redirect)}`}
           style={{
             display: "block",
             background: "transparent",

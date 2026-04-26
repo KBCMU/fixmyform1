@@ -70,3 +70,43 @@
 - [x] Taxingness correctly assigned (machines=moderate, isolations=low, compounds=high)
 - [x] Compound detection uses movement pattern, not taxingness
 - [x] Test script passes with reasonable output for all 3 profiles
+
+## 2026-04-26 — Coaching Agent v1
+
+### Phase 1: Foundation (Provider + DB)
+- Delegated to: codex-implementer
+- Spec: task_specs/coaching-agent-foundation.md
+- Status: done
+- Output: src/lib/agent/ (4 files) + supabase/migrations/005, 006
+  - types.ts, provider.ts, providers/openrouter.ts, index.ts
+  - coach_profiles, coach_conversations, coach_messages tables
+
+### Phase 2: Onboarding Wizard
+- Delegated to: codex-implementer
+- Spec: task_specs/coaching-agent-onboarding.md
+- Status: done
+- Output: src/components/coach/ (6 files) + src/app/coach/page.tsx + src/app/api/coach/onboarding/route.ts
+  - OnboardingWizard, BackgroundStep, GoalsStep, InjuriesStep, PreferencesStep, ReviewStep
+
+### Phase 3: Core Agent (Orchestrator + Tools + Chat UI)
+- Delegated to: codex-implementer
+- Spec: task_specs/coaching-agent-core.md
+- Status: done
+- Output: src/lib/agent/orchestrator.ts, systemPrompt.ts, tools/ (5 files) + src/app/api/coach/chat + conversations routes + ChatInterface.tsx
+  - Agentic tool-call loop with max 3 iterations
+  - 4 tools: getUserProgram, getFormHistory, getExerciseInfo, getTrainingAdvice
+  - Science-based system prompt (Beardsley, TNF, Mundy, Mallory, King Deltoids)
+
+### Phase 4: Video Analysis in Chat
+- Delegated to: codex-implementer
+- Spec: task_specs/coaching-agent-video.md
+- Status: done
+- Output: src/components/coach/VideoAttachment.tsx, src/lib/agent/tools/analyzeForm.ts
+  - Modified ChatInterface.tsx (attach button), chat route (evaluation field)
+
+### Phase 5: Push Notifications
+- Delegated to: codex-implementer
+- Spec: task_specs/coaching-agent-notifications.md
+- Status: done
+- Output: public/sw.js, src/lib/agent/notifications.ts, NotificationOptIn.tsx, 2 API routes, migration 007
+  - Requires VAPID keys in env (npx web-push generate-vapid-keys)

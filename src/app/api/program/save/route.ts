@@ -3,6 +3,7 @@
  * POST /api/program/save
  */
 
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import type { GeneratedProgram } from "@/lib/programBuilder/types";
@@ -14,16 +15,12 @@ interface SaveRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    // Auth check
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const supabase = await createClient();
 
     // Parse request body
     const body = (await request.json()) as SaveRequest;
@@ -65,7 +62,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await (supabase as any)
       .from("user_programs")
       .insert({
-        user_id: user.id,
+        user_id: userId,
         name: name,
         profile: program.profile,
         program_data: {

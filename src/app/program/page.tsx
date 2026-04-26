@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { useClerkSupabase } from "@/lib/supabase/clerk-browser";
 
 interface SavedProgram {
   id: string;
@@ -26,6 +27,7 @@ export default function ProgramPage() {
   const [programs, setPrograms] = useState<SavedProgram[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { supabase, sessionLoaded } = useClerkSupabase();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 150);
@@ -33,15 +35,13 @@ export default function ProgramPage() {
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      setLoading(false);
+    if (!user || !sessionLoaded) {
+      if (!user) setLoading(false);
       return;
     }
 
     async function fetchPrograms() {
       try {
-        const { createClient } = await import("@/lib/supabase/client");
-        const supabase = createClient();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { data } = await (supabase as any)
           .from("user_programs")
@@ -55,7 +55,7 @@ export default function ProgramPage() {
       }
     }
     fetchPrograms();
-  }, [user]);
+  }, [user, sessionLoaded, supabase]);
 
   return (
     <div className="min-h-screen" style={{ background: "#000000" }}>
@@ -184,7 +184,7 @@ export default function ProgramPage() {
               className={`text-center transition-all duration-1000 delay-500 ease-out ${loaded ? "opacity-100" : "opacity-0"}`}
               style={{ color: "rgba(255,255,255,0.35)", fontSize: "13px", marginTop: "32px" }}
             >
-              <Link href="/login" style={{ color: "#E66A23", textDecoration: "underline", textDecorationColor: "rgba(230,106,35,0.3)" }}>
+              <Link href="/sign-in" style={{ color: "#E66A23", textDecoration: "underline", textDecorationColor: "rgba(230,106,35,0.3)" }}>
                 Sign in
               </Link>
               {" "}to save and view your programs.

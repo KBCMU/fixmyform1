@@ -12,6 +12,7 @@ export default function Header() {
     { name: "Form", href: "/form" },
     { name: "Diet", href: "/diet" },
     { name: "Program", href: "/program" },
+    { name: "Coach", href: "/coach" },
   ];
 
   const isActive = (href: string) => {

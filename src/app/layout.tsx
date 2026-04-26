@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Cormorant_Garamond, Geist_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -37,7 +38,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${cormorant.variable} ${geistMono.variable} antialiased selection:bg-white/20 selection:text-white`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <ClerkProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

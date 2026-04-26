@@ -1,11 +1,16 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import { useUser } from "@clerk/nextjs";
+import { createContext, useContext } from "react";
+
+/** Minimal user shape for existing UI (id + optional email). */
+export type AppUser = {
+  id: string;
+  email: string | null;
+};
 
 type AuthContextType = {
-  user: User | null;
+  user: AppUser | null;
   loading: boolean;
 };
 
@@ -15,32 +20,19 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+  const { user, isLoaded } = useUser();
+  const value: AuthContextType = {
+    user: user
+      ? {
+          id: user.id,
+          email: user.primaryEmailAddress?.emailAddress ?? null,
+        }
+      : null,
+    loading: !isLoaded,
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 }
 
@@ -51,5 +43,3 @@ export function useAuth() {
   }
   return context;
 }
-
-

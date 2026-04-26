@@ -1,23 +1,22 @@
-import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { signOut } from "@/app/actions/auth";
 import Link from "next/link";
+import { AppSignOutButton } from "@/components/auth/AppSignOutButton";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await currentUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/sign-in");
   }
+
+  const email =
+    user.primaryEmailAddress?.emailAddress ??
+    user.emailAddresses[0]?.emailAddress;
 
   return (
     <div className="min-h-screen py-24 px-4 sm:px-6 lg:px-8" style={{ background: "var(--bg-primary)" }}>
       <div className="max-w-4xl mx-auto">
-        {/* Back to home */}
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-sm mb-8 transition-colors"
@@ -41,19 +40,7 @@ export default async function DashboardPage() {
             >
               DASHBOARD
             </h1>
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="px-4 py-2 text-sm font-medium transition-all duration-200"
-                style={{
-                  color: "var(--danger)",
-                  border: "1px solid rgba(239, 68, 68, 0.3)",
-                  borderRadius: "2px",
-                }}
-              >
-                Sign Out
-              </button>
-            </form>
+            <AppSignOutButton />
           </div>
 
           <div className="space-y-6">
@@ -62,7 +49,7 @@ export default async function DashboardPage() {
                 Welcome back!
               </h2>
               <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                {user.email}
+                {email}
               </p>
               <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
                 ID: {user.id}
