@@ -2,8 +2,13 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   outputFileTracingRoot: path.join(__dirname),
+  async redirects() {
+    return [
+      { source: "/login", destination: "/sign-in", permanent: false },
+      { source: "/signup", destination: "/sign-in", permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;

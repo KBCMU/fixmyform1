@@ -1,17 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 
-const isDashboardRoute = createRouteMatcher(["/dashboard(.*)"]);
+const isDashboardRoute = createRouteMatcher(["/dashboard", "/dashboard/(.*)"]);
 
-export default clerkMiddleware(async (auth, req) => {
-  const path = req.nextUrl.pathname;
-  if (path === "/login" || path === "/signup") {
-    const url = req.nextUrl.clone();
-    url.pathname = "/sign-in";
-    return NextResponse.redirect(url);
-  }
-
-  if (isDashboardRoute(req)) {
+export default clerkMiddleware(async (auth, request) => {
+  if (isDashboardRoute(request)) {
     await auth.protect();
   }
 });

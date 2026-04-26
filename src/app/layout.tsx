@@ -38,7 +38,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${cormorant.variable} ${geistMono.variable} antialiased selection:bg-white/20 selection:text-white`}
       >
-        <ClerkProvider>
+        <ClerkProvider
+          signInUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || "/sign-in"}
+          signUpUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL || "/sign-in"}
+        >
           <AuthProvider>{children}</AuthProvider>
         </ClerkProvider>
       </body>
