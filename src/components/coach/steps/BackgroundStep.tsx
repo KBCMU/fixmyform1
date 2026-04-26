@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import type { TrainingBackground } from "@/lib/agent/types";
 
-type BackgroundValue = {
-  experienceLevel?: string;
-  experienceYears?: number;
-};
+type BackgroundValue = Partial<Pick<TrainingBackground, "experienceLevel" | "experienceYears">>;
 
 type Props = {
   value: BackgroundValue;
@@ -15,26 +13,26 @@ type Props = {
 
 const LEVELS = [
   {
-    id: "beginner",
+    id: "beginner" as const,
     label: "Beginner",
     desc: "Less than 1 year of consistent training",
   },
   {
-    id: "intermediate",
+    id: "intermediate" as const,
     label: "Intermediate",
     desc: "1–3 years, familiar with the basics",
   },
   {
-    id: "advanced",
+    id: "advanced" as const,
     label: "Advanced",
     desc: "3+ years, strong technique and programming knowledge",
   },
-];
+] as const;
 
 export default function BackgroundStep({ value, onChange, onNext }: Props) {
   const [local, setLocal] = useState<BackgroundValue>(value);
 
-  function handleLevelSelect(id: string) {
+  function handleLevelSelect(id: TrainingBackground["experienceLevel"]) {
     const updated = { ...local, experienceLevel: id };
     setLocal(updated);
     onChange(updated);
