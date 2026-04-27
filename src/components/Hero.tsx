@@ -148,9 +148,11 @@ export default function Hero() {
           className={`relative w-[min(900px,95vw)] h-[90%] md:h-[110%] transition-opacity duration-1000 delay-100 ${loaded ? 'opacity-100' : 'opacity-0'}`}
           style={{
             transform: mannequinTransform,
-            // Smooth gradient mask to fade the model into the absolute black background
-            maskImage: "linear-gradient(to top, transparent 5%, black 20%, black 85%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to top, transparent 5%, black 20%, black 85%, transparent 100%)",
+            // Fade top/bottom AND left/right so the avatar has no hard edges
+            maskImage: "linear-gradient(to top, transparent 5%, black 20%, black 85%, transparent 100%), linear-gradient(to right, transparent 2%, black 12%, black 88%, transparent 98%)",
+            WebkitMaskImage: "linear-gradient(to top, transparent 5%, black 20%, black 85%, transparent 100%), linear-gradient(to right, transparent 2%, black 12%, black 88%, transparent 98%)",
+            maskComposite: "intersect",
+            WebkitMaskComposite: "destination-in",
           }}
         >
           {/* Removed scale-110, setting quality=100 for max sharpness */}
